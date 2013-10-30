@@ -2,9 +2,9 @@
 
 class Game
   COURSE = ['NORTH', 'EAST', 'SOUTH', 'WEST']
-  def initialize(space_width, space_height)
-    @width = space_width
-    @height = space_height
+  def initialize(options = {space_width: 5, space_height: 6})
+    @width = options[:space_width]
+    @height = options[:space_height]
     @position = {}    
     @course_index = 0
   end
@@ -60,64 +60,40 @@ class Game
     end
   end
   
-  def self.main
-    correct = false
-    width = 5
-    height = 6
-    while !correct
-      puts "Enter space dimensions. Default:\n 5 6"
-      input_str = gets.chomp!
-      break if input_str.nil? || input_str == ''
-      input_params = input_str.split(' ')
-      begin 
-        width = Integer(input_params[0]).abs
-        height = Integer(input_params[1]).abs
-        puts "OK: width = #{width}; height = #{height}"
-        correct = true
-      rescue
-        puts "You enter wrong parameters (must be: count = 2, type = integer)"
-        correct = false
-      end
-    end
-    
-    game = Game.new(width, height)
-
-    correct = false
-    puts "Enter your command."
-    while !correct
-      begin 
-        puts "E.g.: PLACE 0 0 NORTH"
-        input_str = gets.chomp!.upcase!
-        raise Error if input_str.nil? || input_str == ""
-        input_params = input_str.split(' ')     
-        raise Error if !(input_params[0] =="PLACE" || input_params[0] =="P")
-        correct = game.place(input_params[1],input_params[2],input_params[3])
-      rescue
+  def exec(input_str)  
+    input_str.chomp!
+    return if input_str.nil? || input_str == ""
+    str = input_str.upcase    
+    params = str.split(' ')
+    case params[0]
+      when 'L', "LEFT" then self.left
+      when 'R', "RIGHT" then self.right 
+      when 'M', "MOVE" then self.move
+      when 'REP', "REPORT" then self.report 
+      when 'P', "PLACE" then self.place(params[1], params[2], params[3])
+      else 
         puts "You enter wrong command. Try again"
-        correct = false
-      end
-    end
-
-    play = true
-    while play
-      input_str = gets.chomp!.upcase!
-      redo if input_str.nil? || input_str == ""
-      params = input_str.split(' ')
-      case params[0]
-        when 'L', "LEFT" then game.left
-        when 'R', "RIGHT" then game.right 
-        when 'M', "MOVE" then game.move
-        when 'REP', "REPORT" then game.report 
-        when 'P', "PLACE" then game.place(params[1], params[2], params[3])
-        when 'Q', "QUIT" then play = false
-        else 
-          puts "You enter wrong command. Try again"
-      end
-    end
-    puts "Game over"  
+    end  
   end
 
 end
 
-Game.main
+game = Game.new({space_width: 8, space_height: 8})
+
+puts "Enter your command."
+puts "E.g.: PLACE 0 0 NORTH"
+play = true
+while play  
+  input_str = gets
+  str = input_str.chomp!.upcase!
+  if ['Q', "QUIT"].include?(str)
+    play = false 
+  else
+    game.exec(input_str)
+  end
+end
+puts "Game over"  
+
+
+
 
