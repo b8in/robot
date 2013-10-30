@@ -41,9 +41,9 @@ class Game
   
   def place(init_pos_x, init_pos_y, init_course)
     begin
-      x = Integer(init_pos_x).abs
-      y = Integer(init_pos_y).abs
-      raise Error if x>=@width || y>=@height
+      x = Integer(init_pos_x)
+      y = Integer(init_pos_y)
+      raise Error if x>=@width || y>=@height || x<0 || y<0
       raise Error unless ['NORTH', 'WEST', 'SOUTH', 'EAST'].include?(init_course)
       @course_index = Game.course.index(init_course)   
       @position[:x] = x
