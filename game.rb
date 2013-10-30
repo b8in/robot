@@ -7,6 +7,7 @@ class Game
     @height = options[:space_height]
     @position = {}    
     @course_index = 0
+    @init = false
   end
   
   def self.course
@@ -53,6 +54,7 @@ class Game
       @course_index = Game.course.index(init_course)   
       @position[:x] = x
       @position[:y] = y
+      @init = true
       return true
     rescue
       puts "You enter wrong command. Try again"
@@ -65,17 +67,26 @@ class Game
     return if input_str.nil? || input_str == ""
     str = input_str.upcase    
     params = str.split(' ')
-    case params[0]
-      when 'L', "LEFT" then self.left
-      when 'R', "RIGHT" then self.right 
-      when 'M', "MOVE" then self.move
-      when 'REP', "REPORT" then self.report 
-      when 'P', "PLACE" 
+    if @init
+      case params[0]
+        when 'L', "LEFT" then self.left
+        when 'R', "RIGHT" then self.right 
+        when 'M', "MOVE" then self.move
+        when 'REP', "REPORT" then self.report 
+        when 'P', "PLACE" 
+          data = params[1].split(',')
+          self.place(data[0], data[1], data[2])
+        else 
+          puts "You enter wrong command. Try again"
+      end 
+    else
+      if params[0]=="PLACE" 
         data = params[1].split(',')
-        self.place(data[0], data[1], data[2])
-      else 
-        puts "You enter wrong command. Try again"
-    end  
+        self.place(data[0], data[1], data[2]) 
+      else
+        puts "First command must be 'PLACE'"
+      end     
+    end 
   end
 
 end
