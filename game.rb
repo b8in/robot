@@ -44,12 +44,6 @@ class Game
       x = Integer(init_pos_x).abs
       y = Integer(init_pos_y).abs
       raise Error if x>=@width || y>=@height
-      case init_course
-        when 'N','n' then init_course = "NORTH"
-        when 'W','w' then init_course = "WEST"
-        when 'S','s' then init_course = "SOUTH"
-        when 'E','e' then init_course = "EAST"
-      end
       raise Error unless ['NORTH', 'WEST', 'SOUTH', 'EAST'].include?(init_course)
       @course_index = Game.course.index(init_course)   
       @position[:x] = x
@@ -64,16 +58,15 @@ class Game
   
   def exec(input_str)  
     input_str.chomp!
-    return if input_str.nil? || input_str == ""
-    str = input_str.upcase    
-    params = str.split(' ')
+    return if input_str.nil? || input_str == ""  
+    params = input_str.split(' ')
     if @init
       case params[0]
-        when 'L', "LEFT" then self.left
-        when 'R', "RIGHT" then self.right 
-        when 'M', "MOVE" then self.move
-        when 'REP', "REPORT" then self.report 
-        when 'P', "PLACE" 
+        when "LEFT" then self.left
+        when "RIGHT" then self.right 
+        when "MOVE" then self.move
+        when "REPORT" then self.report 
+        when "PLACE" 
           data = params[1].split(',')
           self.place(data[0], data[1], data[2])
         else 
