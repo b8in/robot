@@ -70,7 +70,9 @@ class Game
       when 'R', "RIGHT" then self.right 
       when 'M', "MOVE" then self.move
       when 'REP', "REPORT" then self.report 
-      when 'P', "PLACE" then self.place(params[1], params[2], params[3])
+      when 'P', "PLACE" 
+        data = params[1].split(',')
+        self.place(data[0], data[1], data[2])
       else 
         puts "You enter wrong command. Try again"
     end  
