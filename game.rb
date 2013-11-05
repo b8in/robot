@@ -2,6 +2,7 @@
 
 class Game
   COURSE = ['NORTH', 'EAST', 'SOUTH', 'WEST']
+  
   def initialize(options = {space_width: 5, space_height: 6})
     @width = options[:space_width]
     @height = options[:space_height]
