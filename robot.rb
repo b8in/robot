@@ -12,8 +12,9 @@ class Robot
   end
   
   def exec(input_str)
+    return if input_str.nil?
     input_str.chomp!
-    return if input_str.nil? || input_str == ""
+    return if input_str == ""
     params = input_str.split(' ')
     if placed?
       case params[0]
@@ -63,7 +64,7 @@ class Robot
   end
   
   def report
-    puts "Current position [#{@position[:x]}, #{@position[:y]}]. Course #{COURSE[@course_index]}"
+    p "Current position [#{@position[:x]}, #{@position[:y]}]. Course #{COURSE[@course_index]}"
   end
   
   def place(init_pos_x, init_pos_y, init_course)
