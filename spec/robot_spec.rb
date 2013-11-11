@@ -77,19 +77,16 @@ describe Robot do
             it "robot does nothing (without errors)" do
               expect { frozen_robot.exec("wrong command") }.not_to raise_error
             end
-  #######################################################################################
             it "robot does nothing (robots state not changed)" do
-              placed_robot.freeze
-              flag = false
+              flag = true
               begin
-                placed_robot.send(:left)
+                frozen_robot.exec("LEFT")
               rescue RuntimeError => ex
-                flag = true if ex.message == "can't modify frozen Robot"
+                flag = false if ex.message == "can't modify frozen Robot"
               ensure
                 flag.should be_true
               end
             end
-  #######################################################################################
           end
 
           context "and command is 'PLACE'" do
@@ -113,10 +110,19 @@ describe Robot do
           it "application not raise error" do
             expect { placed_robot.exec("LEFT") }.not_to raise_error
           end
-          it "robot execute command" do
-            @placed_frozen_robot.exec("PLACE 0,0,NORTH").should == false
+  #######################################################################################
+          it "robot execute command (robots state is changed)" do
+            placed_robot.freeze
+            flag = false
+            begin
+              placed_robot.send(:left)
+            rescue RuntimeError => ex
+              flag = true if ex.message == "can't modify frozen Robot"
+            ensure
+              flag.should be_true
+            end
           end
-
+  #######################################################################################
         end
       end
     end
