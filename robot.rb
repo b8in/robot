@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -w
 
 class Robot
   COURSE = ['NORTH', 'EAST', 'SOUTH', 'WEST'].freeze

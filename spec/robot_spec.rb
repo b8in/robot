@@ -74,9 +74,22 @@ describe Robot do
             it "application not raise error" do
               expect { robot.exec("LEFT") }.not_to raise_error
             end
-            it "robot does nothing" do
+            it "robot does nothing (without errors)" do
               expect { frozen_robot.exec("wrong command") }.not_to raise_error
             end
+  #######################################################################################
+            it "robot does nothing (robots state not changed)" do
+              placed_robot.freeze
+              flag = false
+              begin
+                placed_robot.send(:left)
+              rescue RuntimeError => ex
+                flag = true if ex.message == "can't modify frozen Robot"
+              ensure
+                flag.should be_true
+              end
+            end
+  #######################################################################################
           end
 
           context "and command is 'PLACE'" do
@@ -84,22 +97,21 @@ describe Robot do
               expect { robot.exec("PLACE 0,0,NORTH") }.not_to raise_error
             end
             it "place robot on table (some 2D space)" do
-              # robot.exec("PLACE 0,0,NORTH").should == true ----> ok if aren't any exceptions
-              frozen_robot.exec("PLACE 0,0,NORTH").should == false # ok if app raise any exception, e.g. "expected Exception but nothing was raised"
+              # robot.exec("PLACE 0,0,NORTH").should == true ----> ok if aren't any exceptions in method 'place'
+              frozen_robot.exec("PLACE 0,0,NORTH").should == false # ok if my app raise any exception (see method 'place')
             end
           end
         end
 
         context "and robot is placed" do
           before do
-            robot.exec("PLACE 0,0,NORTH")
             @placed_frozen_robot = Robot.new
             @placed_frozen_robot.exec("PLACE 0,0,NORTH")
             @placed_frozen_robot.freeze
           end
 
           it "application not raise error" do
-            expect { robot.exec("LEFT") }.not_to raise_error
+            expect { placed_robot.exec("LEFT") }.not_to raise_error
           end
           it "robot execute command" do
             @placed_frozen_robot.exec("PLACE 0,0,NORTH").should == false
@@ -185,6 +197,84 @@ describe Robot do
         new_position[:y].should == 3
         Robot::COURSE[robot.instance_variable_get(:@course_index)].should == "WEST"
         robot.instance_variable_get(:@init).should be_true
+      end
+    end
+  end
+
+  describe "#move" do
+    context "to NORTH" do
+      it "successful change coordinates"  do
+        robot.send(:place, 0, 0, "NORTH")
+        expect { robot.send(:move) }.not_to raise_error
+        new_position = robot.instance_variable_get(:@position)
+        new_position[:x].should == 0
+        new_position[:y].should == 1
+        Robot::COURSE[robot.instance_variable_get(:@course_index)].should == "NORTH"
+      end
+      it "ignore if can't move" do
+        robot.send(:place, 0, 7, "NORTH")
+        expect { robot.send(:move) }.not_to raise_error
+        new_position = robot.instance_variable_get(:@position)
+        new_position[:x].should == 0
+        new_position[:y].should == 7
+        Robot::COURSE[robot.instance_variable_get(:@course_index)].should == "NORTH"
+      end
+    end
+
+    context "to SOUTH" do
+      it "successful change coordinates"  do
+        robot.send(:place, 0, 7, "SOUTH")
+        expect { robot.send(:move) }.not_to raise_error
+        new_position = robot.instance_variable_get(:@position)
+        new_position[:x].should == 0
+        new_position[:y].should == 6
+        Robot::COURSE[robot.instance_variable_get(:@course_index)].should == "SOUTH"
+      end
+      it "ignore if can't move" do
+        robot.send(:place, 0, 0, "SOUTH")
+        expect { robot.send(:move) }.not_to raise_error
+        new_position = robot.instance_variable_get(:@position)
+        new_position[:x].should == 0
+        new_position[:y].should == 0
+        Robot::COURSE[robot.instance_variable_get(:@course_index)].should == "SOUTH"
+      end
+    end
+
+    context "to WEST" do
+      it "successful change coordinates"  do
+        robot.send(:place, 7, 0, "WEST")
+        expect { robot.send(:move) }.not_to raise_error
+        new_position = robot.instance_variable_get(:@position)
+        new_position[:x].should == 6
+        new_position[:y].should == 0
+        Robot::COURSE[robot.instance_variable_get(:@course_index)].should == "WEST"
+      end
+      it "ignore if can't move" do
+        robot.send(:place, 0, 0, "WEST")
+        expect { robot.send(:move) }.not_to raise_error
+        new_position = robot.instance_variable_get(:@position)
+        new_position[:x].should == 0
+        new_position[:y].should == 0
+        Robot::COURSE[robot.instance_variable_get(:@course_index)].should == "WEST"
+      end
+    end
+
+    context "to EAST" do
+      it "successful change coordinates"  do
+        robot.send(:place, 0, 0, "EAST")
+        expect { robot.send(:move) }.not_to raise_error
+        new_position = robot.instance_variable_get(:@position)
+        new_position[:x].should == 1
+        new_position[:y].should == 0
+        Robot::COURSE[robot.instance_variable_get(:@course_index)].should == "EAST"
+      end
+      it "ignore if can't move" do
+        robot.send(:place, 7, 0, "EAST")
+        expect { robot.send(:move) }.not_to raise_error
+        new_position = robot.instance_variable_get(:@position)
+        new_position[:x].should == 7
+        new_position[:y].should == 0
+        Robot::COURSE[robot.instance_variable_get(:@course_index)].should == "EAST"
       end
     end
   end
