@@ -54,7 +54,7 @@ class Robot
       false
 
   exec : (inputStr) ->
-    return if inputStr is null or inputStr is undefined
+    return unless inputStr?
     return if inputStr.match(/\S/) is null
     params = inputStr.split(' ')
     if @isPlaced()
@@ -78,5 +78,4 @@ class Robot
 
 r2d2 = new Robot()
 commands = "PLACE 0,0,NORTH;MOVE;REPORT;PLACE 0,0,NORTH;LEFT;REPORT;PLACE 1,2,EAST;MOVE;MOVE;LEFT;MOVE;REPORT".split(';')
-commands.map (command) ->
-  r2d2.exec(command)
+r2d2.exec(command) for command in commands
