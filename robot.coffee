@@ -12,9 +12,8 @@ class Robot
   isPlaced : ->
     @init
 
-  areIncorrectCoordinates : (x, y) ->
-    return true if x is undefined or y is undefined
-    x>=@width || y>=@height || x<0 || y<0
+  areCorrectCoordinates : (x, y) ->
+    x? and y? and 0<=x<@width and 0<=y<@height
 
   isCorrectCourse : (course) ->
     course in @COURSE()
@@ -43,7 +42,7 @@ class Robot
     try
       x = parseInt(initPosX)
       y = parseInt(initPosY)
-      throw Error if @areIncorrectCoordinates(x,y)
+      throw Error unless @areCorrectCoordinates(x,y)
       throw Error unless @isCorrectCourse(initCourse)
       @courseIndex = @COURSE().indexOf(initCourse)
       @position['x'] = x
